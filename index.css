@@ -1,0 +1,42 @@
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, #1a1a1a, #000);
+  font-family: Arial, sans-serif;
+}
+
+.clock {
+  text-align: center;
+}
+
+#date {
+  font-size: 42px;
+  color: #ffd700;
+  letter-spacing: 3px;
+  text-shadow:
+    1px 1px 0 #bfa100,
+    2px 2px 0 #a88f00,
+    3px 3px 10px rgba(0,0,0,0.8);
+}
+
+#time {
+  font-size: 80px;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 10px;
+  text-shadow:
+    1px 1px 0 #ccc,
+    2px 2px 0 #aaa,
+    3px 3px 15px rgba(0,0,0,0.9);
+}
+
+/* HIỆU ỨNG PHÓNG TO */
+#date, #time {
+  transition: transform 0.3s ease;
+}
+
+.scale {
+  transform: scale(1.15);
+}

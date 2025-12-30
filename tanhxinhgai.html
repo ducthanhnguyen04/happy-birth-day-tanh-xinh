@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birth Day Tành Xinh Gái</title>
+    <style>
+        :root {
+            --bg-color: #050510;
+            --text-color: #ffffff;
+            --accent-color: #ff4081;
+            --sphere-size: 600px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        body:active {
+            cursor: grabbing;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .scene {
+            position: relative;
+            width: var(--sphere-size);
+            height: var(--sphere-size);
+            transform-style: preserve-3d;
+            touch-action: none;
+        }
+
+        .element {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.1s linear, opacity 0.3s;
+            user-select: none;
+            margin-top: -30px; 
+            margin-left: -30px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            will-change: transform, opacity;
+            transform: translateZ(0);
+        }
+
+        .element.img-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255, 64, 129, 0.3); 
+        }
+
+        .element.img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+        }
+
+        .element.icon {
+            font-size: 40px;
+            filter: drop-shadow(0 0 5px currentColor);
+            animation: floatIcon 3s ease-in-out infinite alternate;
+        }
+
+        .element.heart { color: var(--accent-color); }
+        .element.flower { color: #ffeb3b; font-size: 32px; }
+
+        .element.text {
+            width: auto;
+            height: auto;
+            margin: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 5px var(--accent-color);
+            white-space: nowrap;
+        }
+
+        @keyframes floatIcon {
+            from { transform: scale(1); }
+            to { transform: scale(1.3); }
+        }
+
+        .info {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            pointer-events: none;
+            background: rgba(0,0,0,0.4);
+            padding: 5px 10px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            z-index: 100;
+        }
+
+        .ui-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            min-height: 36px; 
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+        }
+        
+        .btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            font-weight: bold;
+        }
+
+        #zoom-indicator {
+            position: fixed;
+            bottom: 110px;
+            right: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .element.img-box {
+                box-shadow: none;
+                border: 1px solid rgba(255,255,255,0.3);
+            }
+            .element.icon {
+                filter: none;
+            }
+            .scene {
+                width: 90vw;
+                height: 90vw;
+            }
+            .element {
+                margin-top: -25px;
+                margin-left: -25px;
+                width: 50px;
+                height: 50px;
+            }
+            .element.img-box {
+                width: 50px;
+                height: 50px;
+            }
+            .element.icon {
+                font-size: 30px;
+            }
+            .element.text {
+                font-size: 11px;
+            }
+            .ui-panel {
+                right: 10px;
+                bottom: 10px;
+            }
+            .btn {
+                min-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <div class="scene" id="scene">
+    </div>
+
+    <div class="ui-panel">
+        <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()">Chong chóng tre</button>
+        <button class="btn" onclick="resetZoom()">Reset Zoom</button>
+    </div>
+    
+    <div id="zoom-indicator">Zoom: 100%</div>
+
+    <script>
+        let imgIndex = 2;
+        const CONFIG = {
+            itemCount: 45,       
+            radius: 300,         
+            minRadius: 100,
+            maxRadius: 600,
+            damping: 0.15,
+            autoRotateSpeed: 0.05 
+        };
+
+        const TEXT_CONTENT = ["Happy Birth Day Tành", "Chúc em sinh nhật vui vẻ", "Mãi xinh đẹp như vậy", "Mọi điều tốt đẹp đến với em", "Luôn vui vẻ và hạnh phúc nha"];
+        
+        const scene = document.getElementById('scene');
+        const zoomIndicator = document.getElementById('zoom-indicator');
+        const btnAutoRotate = document.getElementById('btnAutoRotate');
+        let elements = [];
+        let isDragging = false;
+        
+        let isAutoRotating = false;
+
+        let currentRotX = 0, currentRotY = 0;
+        let targetRotX = 0, targetRotY = 0;
+        let startX, startY;
+        let lastMouseX, lastMouseY;
+
+        let currentRadius = CONFIG.radius;
+        let targetRadius = CONFIG.radius;
+
+        function initStars() {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const stars = [];
+            const isMobile = window.innerWidth <= 768;
+            const density = isMobile ? 5000 : 3000; 
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                createStars();
+            }
+
+            function createStars() {
+                stars.length = 0;
+                const count = Math.floor((w * h) / density);
+                for(let i=0; i<count; i++) {
+                    stars.push({
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        radius: Math.random() * 1.5,
+                        alpha: Math.random(),
+                        speed: Math.random() * 0.05
+                    });
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = "white";
+                stars.forEach(star => {
+                    ctx.globalAlpha = star.alpha;
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    star.alpha += star.speed;
+                    if(star.alpha > 1 || star.alpha < 0.2) star.speed = -star.speed;
+                });
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+        }
+
+        function createElements() {
+            scene.innerHTML = '';
+            elements = [];
+
+            const phi = Math.PI * (3 - Math.sqrt(5)); 
+
+            for (let i = 0; i < CONFIG.itemCount; i++) {
+                const el = document.createElement('div');
+                const type = Math.random();
+
+                if (type < 0.6) {
+                    el.className = 'element img-box';
+                    const img = document.createElement('img');
+                    img.src = `tanh${imgIndex}.PNG`;
+                        imgIndex++;
+                    if (imgIndex > 19) imgIndex = 2;
+
+                    img.loading = "lazy";
+                    el.appendChild(img);
+                } else if (type < 0.8) {
+                    el.className = 'element text';
+                    el.innerText = TEXT_CONTENT[Math.floor(Math.random() * TEXT_CONTENT.length)];
+                } else if (type < 0.9) {
+                    el.className = 'element icon heart';
+                    el.innerHTML = '❤';
+                } else {
+                    el.className = 'element icon flower';
+                    el.innerHTML = '✿';
+                }
+
+                scene.appendChild(el);
+
+                const y = 1 - (i / (CONFIG.itemCount - 1)) * 2;
+                const r = Math.sqrt(1 - y * y);
+                const theta = phi * i;
+
+                const x = Math.cos(theta) * r;
+                const z = Math.sin(theta) * r;
+
+                elements.push({ dom: el, x: x, y: y, z: z });
+            }
+        }
+
+        function toggleAutoRotate() {
+            isAutoRotating = !isAutoRotating;
+            
+            if (isAutoRotating) {
+                btnAutoRotate.innerText = "Tắt chong chóng";
+                btnAutoRotate.classList.add('active');
+            } else {
+                btnAutoRotate.innerText = "Chong chóng tre";
+                btnAutoRotate.classList.remove('active');
+            }
+        }
+
+        document.addEventListener('wheel', (e) => {
+            const sensitivity = 1.0; 
+            targetRadius -= e.deltaY * sensitivity;
+            if (targetRadius < CONFIG.minRadius) targetRadius = CONFIG.minRadius;
+            if (targetRadius > CONFIG.maxRadius) targetRadius = CONFIG.maxRadius;
+            updateZoomIndicator();
+        }, { passive: true });
+
+        let initialPinchDistance = 0;
+        let lastPinchRadius = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                lastPinchRadius = currentRadius;
+                isDragging = false; 
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault(); 
+                const currentPinchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const scaleChange = initialPinchDistance / currentPinchDistance;
+                targetRadius = lastPinchRadius * scaleChange;
+                if (targetRadius < CONFIG.minRadius) targetRadius = CONFIG.minRadius;
+                if (targetRadius > CONFIG.maxRadius) targetRadius = CONFIG.maxRadius;
+                updateZoomIndicator();
+            }
+        }, { passive: false });
+
+        function updateZoomIndicator() {
+            const percent = Math.round((currentRadius / CONFIG.radius) * 100);
+            zoomIndicator.innerText = `Zoom: ${percent}%`;
+        }
+        
+        function resetZoom() {
+            targetRadius = CONFIG.radius;
+        }
+
+        function updatePositions() {
+            if (isAutoRotating && !isDragging) {
+                targetRotY += CONFIG.autoRotateSpeed; 
+            }
+
+            currentRadius += (targetRadius - currentRadius) * CONFIG.damping;
+            currentRotX += (targetRotX - currentRotX) * CONFIG.damping;
+            currentRotY += (targetRotY - currentRotY) * CONFIG.damping;
+
+            if (Math.abs(targetRadius - currentRadius) > 1) {
+                 updateZoomIndicator();
+            }
+
+            const cosX = Math.cos(currentRotX);
+            const sinX = Math.sin(currentRotX);
+            const cosY = Math.cos(currentRotY);
+            const sinY = Math.sin(currentRotY);
+
+            elements.forEach(item => {
+                let x1 = item.x * cosY - item.z * sinY;
+                let z1 = item.z * cosY + item.x * sinY;
+
+                let y1 = item.y * cosX - z1 * sinX;
+                let z2 = z1 * cosX + item.y * sinX;
+
+                const scale = (z2 + 2) / 3; 
+                const alpha = (z2 + 1.5) / 2.5;
+
+                item.dom.style.transform = `
+                    translate3d(${x1 * currentRadius}px, ${y1 * currentRadius}px, ${z2 * currentRadius}px)
+                    scale(${scale})
+                `;
+                item.dom.style.opacity = Math.max(0.1, Math.min(1, alpha));
+                item.dom.style.zIndex = Math.floor(z2 * 100);
+            });
+
+            requestAnimationFrame(updatePositions);
+        }
+
+        function handleStart(x, y) {
+            if (event.touches && event.touches.length > 1) return;
+            isDragging = true;
+            startX = x;
+            startY = y;
+            lastMouseX = targetRotY;
+            lastMouseY = targetRotX;
+        }
+
+        function handleMove(x, y) {
+            if (!isDragging) return;
+            if(event.target.closest('.scene')) {
+                event.preventDefault(); 
+            }
+            const deltaX = x - startX;
+            const deltaY = y - startY;
+            targetRotY = lastMouseX + deltaX * 0.005;
+            targetRotX = lastMouseY - deltaY * 0.005;
+            targetRotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, targetRotX));
+        }
+
+        function handleEnd() {
+            isDragging = false;
+        }
+
+        document.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
+        document.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+        document.addEventListener('mouseup', handleEnd);
+        
+        document.addEventListener('touchstart', e => handleStart(e.touches[0].clientX, e.touches[0].clientY), {passive: false});
+        document.addEventListener('touchmove', e => {
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        document.addEventListener('touchend', handleEnd);
+
+        function randomizeData() {
+            scene.style.opacity = 0;
+            setTimeout(() => {
+                createElements();
+                scene.style.opacity = 1;
+            }, 300);
+        }
+
+        initStars();
+        createElements();
+        updatePositions();
+
+    </script>
+</body>
+</html>
